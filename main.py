@@ -16,7 +16,7 @@ for submission in subreddit.hot(limit=1):
 """
 scores = []
 
-for submission in subreddit.hot():
+for submission in subreddit.hot(limit=1000):
     title = submission.title
     if "GAME THREAD:" not in title:
         continue
