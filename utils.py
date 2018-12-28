@@ -111,7 +111,7 @@ def main():
     conn = create_connection(db)
     with conn:
         submissions = """ CREATE TABLE IF NOT EXISTS submissions (
-                                            id integer PRIMARY KEY,
+                                            id text PRIMARY KEY,
                                             title text NOT NULL,
                                             date text,
                                             score integer

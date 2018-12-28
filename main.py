@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 import praw
+from datetime import datetime
+import utils
 
 reddit = praw.Reddit('nbabot')
 subreddit = reddit.subreddit("nba")
@@ -31,5 +33,26 @@ scores = []
 #             print(comment.body)
 #         print(i)
 
-for submission in subreddit.search("GAME THREAD", sort='new', time_filter='day'):
-   print(submission.title)
+def main():
+    db = 'db/r_nba_log.db'
+    print(db)
+    # create a database connection
+    conn = utils.create_connection(db)
+    with conn:
+        submissions = """ CREATE TABLE IF NOT EXISTS submissions (
+                                           id text PRIMARY KEY,
+                                           title text NOT NULL,
+                                           date text,
+                                           score integer
+                                       ); """
+        utils.create_table(conn, submissions)
+        for submission in subreddit.search("GAME THREAD", sort='new', time_filter='day'):
+            id = submission.id
+            title = submission.title
+            date = datetime.utcfromtimestamp(int(submission.created_utc)).strftime('%Y-%m-%d %H:%M:%S')
+            score = submission.score
+            submission = (id, title, date, score)
+            utils.insert_submission(conn, submission)
+
+if __name__ == '__main__':
+    main()
