@@ -105,6 +105,10 @@ def select_submission(conn, id):
     row = cur.fetchall()
     return row
 
+def utc_to_std_time(utc_time):
+    from datetime import datetime
+    return datetime.utcfromtimestamp(int(utc_time)).strftime('%Y-%m-%d %H:%M:%S')
+
 def main():
     db = 'db/pythonsqlite.db'
     # create a database connection
