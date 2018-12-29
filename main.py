@@ -31,6 +31,14 @@ for submission in subreddit.hot(limit=1):
 #             print(comment.body)
 #         print(i)
 
+
+def metadata_extractor(submission):
+    id = submission.id
+    title = submission.title
+    date = utils.utc_to_std_time(submission.created_utc)
+    score = submission.score
+    return (id, title, date, score)
+
 def main():
     # r/nba logs database filepath
     db = 'db/r_nba_log.db'
@@ -46,12 +54,8 @@ def main():
                                        ); """
         utils.create_table(conn, submissions)
         for submission in subreddit.search("GAME THREAD", sort='new', time_filter='day'):
-            id = submission.id
-            title = submission.title
-            date = utils.utc_to_std_time(submission.created_utc)
-            score = submission.score
-            submission = (id, title, date, score)
-            utils.insert_submission(conn, submission)
+            submission_data = metadata_extractor(submission)
+            utils.insert_submission(conn, submission_data)
 
 if __name__ == '__main__':
     main()
