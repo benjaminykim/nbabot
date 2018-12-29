@@ -33,6 +33,10 @@ for submission in subreddit.hot(limit=1):
 
 
 def metadata_extractor(submission):
+    """ extract data (id, title, date, score) from submission
+    :param submission: Submission object (sqlite3)
+    :return: (id, title, date, score) tuple
+    """
     id = submission.id
     title = submission.title
     date = utils.utc_to_std_time(submission.created_utc)
