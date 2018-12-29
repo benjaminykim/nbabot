@@ -108,19 +108,3 @@ def select_submission(conn, id):
 def utc_to_std_time(utc_time):
     from datetime import datetime
     return datetime.utcfromtimestamp(int(utc_time)).strftime('%Y-%m-%d %H:%M:%S')
-
-def main():
-    db = 'db/pythonsqlite.db'
-    # create a database connection
-    conn = create_connection(db)
-    with conn:
-        submissions = """ CREATE TABLE IF NOT EXISTS submissions (
-                                            id text PRIMARY KEY,
-                                            title text NOT NULL,
-                                            date text,
-                                            score integer
-                                        ); """
-        create_table(conn, submissions)
-
-if __name__ == '__main__':
-    main()
