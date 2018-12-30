@@ -35,8 +35,8 @@ def insert_submission(conn, submission):
     if select_submission(conn, id):
         update_submission(conn, submission)
     else:
-        sql = ''' INSERT INTO submissions(id,title,date,score)
-                  VALUES(?,?,?,?) '''
+        sql = ''' INSERT INTO submissions(id,title,date,score,type)
+                  VALUES(?,?,?,?,?) '''
         cur = conn.cursor()
         cur.execute(sql, submission)
 
@@ -44,18 +44,19 @@ def update_submission(conn, submission_update):
     """
     update submission by id with new data
     :param conn: Connection object
-    :param submission_update: (id, title, date, score) tuple
+    :param submission_update: (id, title, date, score, type) tuple
     :return:
     """
     sql = """   UPDATE submissions
                     SET
                         title = ?,
                         date = ?,
-                        score = ?
+                        score = ?,
+                        type = ?
                     WHERE id = ?
                     ;"""
-    id, title, date, score = submission_update
-    submission_update = (title, date, score, id)
+    id, title, date, score, type = submission_update
+    submission_update = (title, date, score, id, type)
     cur = conn.cursor()
     cur.execute(sql, submission_update)
 

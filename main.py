@@ -32,7 +32,7 @@ for submission in subreddit.hot(limit=1):
 #         print(i)
 
 
-def metadata_extractor(submission):
+def metadata_extractor(submission, type):
     """ extract data (id, title, date, score) from submission
     :param submission: Submission object (sqlite3)
     :return: (id, title, date, score) tuple
@@ -41,7 +41,7 @@ def metadata_extractor(submission):
     title = submission.title
     date = utils.utc_to_std_time(submission.created_utc)
     score = submission.score
-    return (id, title, date, score)
+    return (id, title, date, score, type)
 
 def main():
     # r/nba logs database filepath
@@ -54,11 +54,12 @@ def main():
                                            id text PRIMARY KEY,
                                            title text NOT NULL,
                                            date text,
-                                           score integer
+                                           score integer,
+                                           type text
                                        ); """
         utils.create_table(conn, submissions)
         for submission in subreddit.search("GAME THREAD", sort='new', time_filter='day'):
-            submission_data = metadata_extractor(submission)
+            submission_data = metadata_extractor(submission, "GAME THREAD")
             utils.insert_submission(conn, submission_data)
 
 if __name__ == '__main__':
