@@ -28,7 +28,7 @@ def create_table(conn, sql_table):
 def insert_submission(conn, submission):
     """ insert subreddit submission into database
     :param conn: Connection object
-    :param submission: (id, title, date, score) tuple
+    :param submission: (id, title, date, score, type) tuple
     :return:
     """
     id = submission[0]
