@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import praw
 import utils
+from sklearn.feature_extraction.text import CountVectorizer
 
 reddit = praw.Reddit('nbabot')
 subreddit = reddit.subreddit("nba")
@@ -62,5 +63,21 @@ def main():
             submission_data = metadata_extractor(submission, "GAME THREAD")
             utils.insert_submission(conn, submission_data)
 
+def count_vectorizer():
+    corpus = [
+        'This is the first document.',
+        'This document is the second document.',
+        'And this is the third one.',
+        'Is this the first document?',
+        ]
+    for submission in subreddit.hot(limit=1):
+        submission.comments.replace_more(limit=0)
+        corpus = [comment.body for comment in submission.comments.list()]
+
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(corpus)
+    print(vectorizer.get_feature_names())
+    print(X.toarray())
+
 if __name__ == '__main__':
-    main()
+    count_vectorizer()
