@@ -2,10 +2,12 @@ import sqlite3
 from sqlite3 import Error
 import praw
 import utils
-from sklearn.feature_extraction.text import CountVectorizer
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
 
 reddit = praw.Reddit('nbabot')
 subreddit = reddit.subreddit("nba")
+sia = SIA()
 
 def metadata_extractor(submission, type):
     """ extract data (id, title, date, score) from submission
@@ -17,8 +19,18 @@ def metadata_extractor(submission, type):
     date = utils.utc_to_std_time(submission.created_utc)
     score = submission.score
     comment_data = get_comments(submission)
-    sentiment = 0
+    sentiment = get_sentiment_intensity(comment_data)
     return (id, title, date, score, type, sentiment)
+
+# sentence = """At eight o'clock on Thursday morning Arthur didn't feel very good."""
+# tokens = nltk.word_tokenize(sentence)
+
+def get_sentiment_intensity(corpus):
+    scores = []
+    for line in corpus:
+        scores.append(sia.polarity_scores(line)['compound'])
+    return sum(scores) / float(len(scores))
+
 
 def get_comments(submission):
     """ get comments from submission
