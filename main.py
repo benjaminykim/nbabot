@@ -31,7 +31,6 @@ def get_sentiment_intensity(corpus):
         scores.append(sia.polarity_scores(line)['compound'])
     return sum(scores) / float(len(scores))
 
-
 def get_comments(submission):
     """ get comments from submission
     :param submission: Submission object (sqlite3)
