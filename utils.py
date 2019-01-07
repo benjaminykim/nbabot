@@ -28,15 +28,15 @@ def create_table(conn, sql_table):
 def insert_submission(conn, submission):
     """ insert subreddit submission into database
     :param conn: Connection object
-    :param submission: (id, title, date, score, type) tuple
+    :param submission: (id, title, date, score, type, sentiment) tuple
     :return:
     """
     id = submission[0]
     if select_submission(conn, id):
         update_submission(conn, submission)
     else:
-        sql = ''' INSERT INTO submissions(id,title,date,score,type)
-                  VALUES(?,?,?,?,?) '''
+        sql = ''' INSERT INTO submissions(id,title,date,score,type,sentiment)
+                  VALUES(?,?,?,?,?,?) '''
         cur = conn.cursor()
         cur.execute(sql, submission)
 
@@ -44,7 +44,7 @@ def update_submission(conn, submission_update):
     """
     update submission by id with new data
     :param conn: Connection object
-    :param submission_update: (id, title, date, score, type) tuple
+    :param submission_update: (id, title, date, score, type, sentiment) tuple
     :return:
     """
     sql = """   UPDATE submissions
@@ -52,11 +52,12 @@ def update_submission(conn, submission_update):
                         title = ?,
                         date = ?,
                         score = ?,
-                        type = ?
+                        type = ?,
+                        sentiment = ?
                     WHERE id = ?
                     ;"""
-    id, title, date, score, type = submission_update
-    submission_update = (title, date, score, id, type)
+    id, title, date, score, type, sentiment = submission_update
+    submission_update = (title, date, score, id, type, sentiment)
     cur = conn.cursor()
     cur.execute(sql, submission_update)
 

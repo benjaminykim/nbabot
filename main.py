@@ -7,42 +7,27 @@ from sklearn.feature_extraction.text import CountVectorizer
 reddit = praw.Reddit('nbabot')
 subreddit = reddit.subreddit("nba")
 
-"""
-for submission in subreddit.hot(limit=1):
-    print("Title: ", submission.title)
-    print("Text: ", submission.selftext)
-    print("Score: ", submission.score)
-    print("----------------------\n")
-
-    submission.comments.replace_more(limit=0)
-    for comment in submission.comments.list():
-        print(comment.body)
-"""
-
-# for submission in subreddit.hot(limit=1000):
-#     title = submission.title
-#     if "GAME THREAD:" not in title:
-#         continue
-#     else:
-#         print(title)
-#         submission.comments.replace_more(limit=0)
-#         i = 0
-#         for comment in submission.comments.list():
-#             i += 1
-#             print(comment.body)
-#         print(i)
-
-
 def metadata_extractor(submission, type):
     """ extract data (id, title, date, score) from submission
     :param submission: Submission object (sqlite3)
-    :return: (id, title, date, score) tuple
+    :return: (id, title, date, score, sentiment) tuple
     """
     id = submission.id
     title = submission.title
     date = utils.utc_to_std_time(submission.created_utc)
     score = submission.score
-    return (id, title, date, score, type)
+    comment_data = get_comments(submission)
+    sentiment = 0
+    return (id, title, date, score, type, sentiment)
+
+def get_comments(submission):
+    """ get comments from submission
+    :param submission: Submission object (sqlite3)
+    :return: comments (string) in list
+    """
+    submission.comments.replace_more(limit=0)
+    comment_data = [comment.body for comment in submission.comments.list()]
+    return comment_data
 
 def main():
     # r/nba logs database filepath
@@ -56,7 +41,8 @@ def main():
                                            title text NOT NULL,
                                            date text,
                                            score integer,
-                                           type text
+                                           type text,
+                                           sentiment decimal
                                        ); """
         utils.create_table(conn, submissions)
         for submission in subreddit.search("GAME THREAD", sort='new', time_filter='day'):
@@ -80,4 +66,4 @@ def count_vectorizer():
     print(X.toarray())
 
 if __name__ == '__main__':
-    count_vectorizer()
+    main()
