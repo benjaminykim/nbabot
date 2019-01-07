@@ -57,7 +57,7 @@ def update_submission(conn, submission_update):
                     WHERE id = ?
                     ;"""
     id, title, date, score, type, sentiment = submission_update
-    submission_update = (title, date, score, id, type, sentiment)
+    submission_update = (title, date, score, type, sentiment, id)
     cur = conn.cursor()
     cur.execute(sql, submission_update)
 
